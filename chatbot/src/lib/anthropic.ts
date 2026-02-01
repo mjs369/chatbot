@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { Message } from '@/types/chat'
+import { Message, ImageAttachment } from '@/types/chat'
 
 // Anthropicクライアントのインスタンス（遅延初期化）
 let anthropicClient: Anthropic | null = null
@@ -46,10 +46,59 @@ export class ClaudeAPIError extends Error {
 function formatMessagesForAPI(
   messages: Message[]
 ): Anthropic.MessageParam[] {
-  return messages.map((msg) => ({
-    role: msg.role,
-    content: msg.content,
-  }))
+  return messages.map((msg) => {
+    // contentが既に配列形式の場合はそのまま使用
+    if (Array.isArray(msg.content)) {
+      return {
+        role: msg.role,
+        content: msg.content,
+      }
+    }
+
+    // contentが文字列の場合
+    return {
+      role: msg.role,
+      content: msg.content,
+    }
+  })
+}
+
+/**
+ * 画像を含むメッセージコンテンツを構築
+ */
+function buildMessageContent(
+  text: string,
+  images?: ImageAttachment[]
+): string | Array<Anthropic.ContentBlock> {
+  // 画像がない場合は文字列をそのまま返す
+  if (!images || images.length === 0) {
+    return text
+  }
+
+  // 画像がある場合は配列形式で返す
+  const content: Array<Anthropic.ContentBlock> = []
+
+  // 画像を追加
+  images.forEach((image) => {
+    content.push({
+      type: 'image',
+      source: {
+        type: 'base64',
+        media_type: image.mediaType,
+        data: image.data,
+      },
+    })
+  })
+
+  // テキストを追加（空でない場合）
+  if (text.trim()) {
+    content.push({
+      type: 'text',
+      text: text,
+    })
+  }
+
+  return content
 }
 
 /**
@@ -57,13 +106,17 @@ function formatMessagesForAPI(
  */
 export async function sendMessage(
   userMessage: string,
-  conversationHistory: Message[] = []
+  conversationHistory: Message[] = [],
+  images?: ImageAttachment[]
 ): Promise<string> {
   try {
     // 会話履歴を整形
     const messages: Anthropic.MessageParam[] = [
       ...formatMessagesForAPI(conversationHistory),
-      { role: 'user', content: userMessage },
+      {
+        role: 'user',
+        content: buildMessageContent(userMessage, images),
+      },
     ]
 
     // Claude APIを呼び出し

@@ -1,12 +1,25 @@
 // メッセージの役割
 export type MessageRole = 'user' | 'assistant'
 
+// 画像データ
+export interface ImageAttachment {
+  data: string // Base64エンコードされた画像データ
+  mediaType: 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
+  name?: string
+}
+
+// メッセージコンテンツ（テキストまたは画像）
+export type MessageContent =
+  | string
+  | Array<{ type: 'text'; text: string } | { type: 'image'; source: { type: 'base64'; media_type: string; data: string } }>
+
 // 個別メッセージ
 export interface Message {
   id: string
   role: MessageRole
-  content: string
+  content: MessageContent
   createdAt: Date
+  images?: ImageAttachment[] // UI表示用
 }
 
 // 会話
@@ -23,6 +36,7 @@ export interface Conversation {
 export interface ChatRequest {
   message: string
   conversationId?: string
+  images?: ImageAttachment[]
 }
 
 // チャットAPIレスポンス
