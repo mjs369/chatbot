@@ -1,0 +1,30 @@
+// Prisma Schema for AI Chatbot
+// MongoDB provider
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// 会話モデル
+model Conversation {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("conversations")
+}
+
+// メッセージモデル（埋め込みドキュメント）
+type Message {
+  id        String   @default(uuid())
+  role      String   // "user" or "assistant"
+  content   String
+  createdAt DateTime @default(now())
+}

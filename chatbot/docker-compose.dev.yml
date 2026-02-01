@@ -1,0 +1,14 @@
+# 開発用: MongoDBのみ起動
+# 使用方法: docker compose -f docker-compose.dev.yml up -d
+
+services:
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_dev_data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongodb_dev_data:

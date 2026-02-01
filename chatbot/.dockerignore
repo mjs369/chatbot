@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# Next.js
+.next
+out
+
+# Testing
+coverage
+tests
+
+# Misc
+.git
+.gitignore
+.env*.local
+*.md
+.DS_Store
+.claude
+
+# Docker
+Dockerfile*
+docker-compose*
