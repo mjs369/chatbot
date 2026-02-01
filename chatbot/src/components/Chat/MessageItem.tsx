@@ -8,6 +8,7 @@ interface MessageItemProps {
 
 export default function MessageItem({ message }: MessageItemProps) {
   const isUser = message.role === 'user'
+  const contentText = typeof message.content === 'string' ? message.content : ''
 
   return (
     <div
@@ -25,9 +26,27 @@ export default function MessageItem({ message }: MessageItemProps) {
             {isUser ? 'あなた' : 'AI'}
           </span>
         </div>
-        <p className="whitespace-pre-wrap break-words text-sm md:text-base">
-          {message.content}
-        </p>
+
+        {/* 画像表示 */}
+        {message.images && message.images.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {message.images.map((image, index) => (
+              <img
+                key={index}
+                src={`data:${image.mediaType};base64,${image.data}`}
+                alt={image.name || `画像 ${index + 1}`}
+                className="max-w-xs rounded-lg border border-gray-300 dark:border-gray-600"
+              />
+            ))}
+          </div>
+        )}
+
+        {/* テキスト表示 */}
+        {contentText && (
+          <p className="whitespace-pre-wrap break-words text-sm md:text-base">
+            {contentText}
+          </p>
+        )}
       </div>
     </div>
   )

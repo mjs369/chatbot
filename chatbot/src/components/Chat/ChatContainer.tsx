@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Message, ConversationListItem, Conversation } from '@/types/chat'
+import { Message, ConversationListItem, Conversation, ImageAttachment } from '@/types/chat'
 import MessageList from './MessageList'
 import ChatInput from './ChatInput'
 import ConversationList from './ConversationList'
@@ -53,7 +53,7 @@ export default function ChatContainer() {
   }, [])
 
   // メッセージを送信
-  const handleSendMessage = async (content: string) => {
+  const handleSendMessage = async (content: string, images?: ImageAttachment[]) => {
     setIsLoading(true)
     setError(null)
 
@@ -63,6 +63,7 @@ export default function ChatContainer() {
       role: 'user',
       content,
       createdAt: new Date(),
+      images,
     }
     setMessages((prev) => [...prev, tempUserMessage])
 
@@ -75,6 +76,7 @@ export default function ChatContainer() {
         body: JSON.stringify({
           message: content,
           conversationId: currentConversationId,
+          images,
         }),
       })
 

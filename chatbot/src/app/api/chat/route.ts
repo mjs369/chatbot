@@ -54,7 +54,7 @@ export async function POST(
     }
 
     // Claude APIを呼び出し
-    const aiResponse = await sendMessage(body.message, conversationHistory)
+    const aiResponse = await sendMessage(body.message, conversationHistory, body.images)
 
     // 新しいメッセージを作成
     const userMessage = {
@@ -62,6 +62,7 @@ export async function POST(
       role: 'user',
       content: body.message,
       createdAt: new Date(),
+      images: body.images,
     }
 
     const assistantMessage = {
