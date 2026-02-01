@@ -8,10 +8,13 @@ export interface ImageAttachment {
   name?: string
 }
 
+// サポートされる画像メディアタイプ
+export type SupportedMediaType = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
+
 // メッセージコンテンツ（テキストまたは画像）
 export type MessageContent =
   | string
-  | Array<{ type: 'text'; text: string } | { type: 'image'; source: { type: 'base64'; media_type: string; data: string } }>
+  | Array<{ type: 'text'; text: string } | { type: 'image'; source: { type: 'base64'; media_type: SupportedMediaType; data: string } }>
 
 // 個別メッセージ
 export interface Message {

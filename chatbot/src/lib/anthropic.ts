@@ -63,20 +63,23 @@ function formatMessagesForAPI(
   })
 }
 
+// サポートされる画像のメディアタイプ
+type SupportedMediaType = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp'
+
 /**
  * 画像を含むメッセージコンテンツを構築
  */
 function buildMessageContent(
   text: string,
   images?: ImageAttachment[]
-): string | Array<Anthropic.ContentBlock> {
+): string | Anthropic.ContentBlockParam[] {
   // 画像がない場合は文字列をそのまま返す
   if (!images || images.length === 0) {
     return text
   }
 
   // 画像がある場合は配列形式で返す
-  const content: Array<Anthropic.ContentBlock> = []
+  const content: Anthropic.ContentBlockParam[] = []
 
   // 画像を追加
   images.forEach((image) => {
@@ -84,7 +87,7 @@ function buildMessageContent(
       type: 'image',
       source: {
         type: 'base64',
-        media_type: image.mediaType,
+        media_type: image.mediaType as SupportedMediaType,
         data: image.data,
       },
     })
