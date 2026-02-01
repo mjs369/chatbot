@@ -21,10 +21,18 @@ model Conversation {
   @@map("conversations")
 }
 
+// 画像添付モデル（埋め込みドキュメント）
+type ImageAttachment {
+  data      String   // Base64エンコードされた画像データ
+  mediaType String   // "image/png", "image/jpeg", etc.
+  name      String?  // ファイル名（オプション）
+}
+
 // メッセージモデル（埋め込みドキュメント）
 type Message {
-  id        String   @default(uuid())
-  role      String   // "user" or "assistant"
+  id        String            @default(uuid())
+  role      String            // "user" or "assistant"
   content   String
-  createdAt DateTime @default(now())
+  images    ImageAttachment[] // 添付画像
+  createdAt DateTime          @default(now())
 }
